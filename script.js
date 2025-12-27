@@ -173,7 +173,7 @@ function renderUI(hadith, thaiText) {
                 
                 <div class="action-buttons" style="margin-top:10px;">
                     <button id="gtBtn" class="btn-secondary" style="width:100%; cursor:pointer;">
-                        🌐 แปลใน Google Translate
+                        🌐 ดูการแปลจาก Google Translate
                     </button>
                                     
                 </div>
@@ -267,6 +267,7 @@ function showToast(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
 
 
 
