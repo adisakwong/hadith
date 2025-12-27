@@ -87,35 +87,45 @@ function fallbackCopy(text) {
 //
 
 function openGoogleTranslate(text) {
-    // สร้าง Form ชั่วคราวขึ้นมาเพื่อส่งข้อมูลแบบ POST/GET 
-    // วิธีนี้เสถียรกว่าบน Android 15
-    const form = document.createElement('form');
-    form.method = 'GET';
-    form.action = 'https://translate.google.com/';
-    form.target = '_blank'; // เปิด Tab ใหม่
-
-    // กำหนด Parameter ตามที่ Google ต้องการ
-    const params = {
-        sl: 'en',
-        tl: 'th',
-        text: text,
-        op: 'translate'
-    };
-
-    for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-            const hiddenField = document.createElement('input');
-            hiddenField.type = 'hidden';
-            hiddenField.name = key;
-            hiddenField.value = params[key];
-            form.appendChild(hiddenField);
-        }
-    }
-
-    document.body.appendChild(form);
-    form.submit(); // ส่งข้อมูล
-    document.body.removeChild(form); // ลบออกเมื่อเสร็จสิ้น
+    // การใช้ /m จะเป็นการบังคับใช้ Mobile Web Interface 
+    // ซึ่งมักจะเลี่ยงการเปิดแอปได้ดีกว่าใน Android 15
+    const cleanText = text.trim().substring(0, 1500); // จำกัดความยาว
+    const url = `https://translate.google.com/m?sl=en&tl=th&q=${encodeURIComponent(cleanText)}`;
+    
+    window.open(url, '_blank');
 }
+
+// function openGoogleTranslate(text) {
+//     // สร้าง Form ชั่วคราวขึ้นมาเพื่อส่งข้อมูลแบบ POST/GET 
+//     // วิธีนี้เสถียรกว่าบน Android 15
+//     const form = document.createElement('form');
+//     form.method = 'GET';
+//     form.action = 'https://translate.google.com/';
+//     form.target = '_blank'; // เปิด Tab ใหม่
+
+//     // กำหนด Parameter ตามที่ Google ต้องการ
+//     const params = {
+//         sl: 'en',
+//         tl: 'th',
+//         text: text,
+//         op: 'translate'
+//     };
+
+//     for (const key in params) {
+//         if (params.hasOwnProperty(key)) {
+//             const hiddenField = document.createElement('input');
+//             hiddenField.type = 'hidden';
+//             hiddenField.name = key;
+//             hiddenField.value = params[key];
+//             form.appendChild(hiddenField);
+//         }
+//     }
+
+//     document.body.appendChild(form);
+//     form.submit(); // ส่งข้อมูล
+//     document.body.removeChild(form); // ลบออกเมื่อเสร็จสิ้น
+// }
+
 
 // function openGoogleTranslate(text) {
 //     // 1. จัดการข้อความ: ตัดส่วนเกินและ Encode ให้ปลอดภัยที่สุด
@@ -173,7 +183,7 @@ function renderUI(hadith, thaiText) {
                 
                 <div class="action-buttons" style="margin-top:10px;">
                     <button id="gtBtn" class="btn-secondary" style="width:100%; cursor:pointer;">
-                        🌐 ดูการแปลจาก Google Translate
+                        🌐 แปลด้วย Google Translate
                     </button>
                                     
                 </div>
@@ -267,6 +277,7 @@ function showToast(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
 
 
 
