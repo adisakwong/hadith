@@ -85,6 +85,25 @@ function fallbackCopy(text) {
     document.body.removeChild(textArea);
 }
 
+function openGoogleTranslate(text) {
+    // 1. จัดการข้อความ: ตัดส่วนเกินและ Encode ให้ปลอดภัยที่สุด
+    const cleanText = text.trim();
+    
+    // 2. ใช้ URL รูปแบบใหม่ที่ Mobile Browser รองรับได้เสถียรกว่า
+    const baseUrl = "https://translate.google.com/";
+    const params = `?sl=en&tl=th&text=${encodeURIComponent(cleanText)}&op=translate`;
+    const finalUrl = baseUrl + params;
+
+    // 3. บน Android บางครั้ง window.open แบบปกติจะถูก Popup Blocker บล็อก
+    // เราจะใช้การสร้าง Anchor Element ชั่วคราวแล้วจำลองการคลิกแทน
+    const a = document.createElement('a');
+    a.href = finalUrl;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
 // ... (ส่วนการค้นหาและแปลภาษาเหมือนเดิม)
 
 // ฟังก์ชันดึงข้อมูลและจัดการ UI (แก้ไขการส่งตัวแปร)
@@ -120,9 +139,14 @@ function renderUI(hadith, thaiText) {
                 <p style="margin-top:10px;">${thaiText}</p>
                 
                 <div class="action-buttons" style="margin-top:10px;">
-                    <button onclick="window.open('${googleTranslateUrl}', '_blank')" class="btn-secondary" style="cursor:pointer; width:100%; justify-content:center;">
+                    <button id="gtBtn" class="btn-secondary" style="width:100%; cursor:pointer;">
                         🌐 เปิดใน Google Translate
                     </button>
+                
+                    // <button onclick="window.open('${googleTranslateUrl}', '_blank')" class="btn-secondary" style="cursor:pointer; width:100%; justify-content:center;">
+                    //     🌐 เปิดใน Google Translate
+                    // </button>
+                    
                 </div>
             </div>
 
@@ -133,6 +157,11 @@ function renderUI(hadith, thaiText) {
         </div>
     `;
 
+    // ผูก Event สำหรับ Android โดยเฉพาะ
+    document.getElementById('gtBtn').onclick = function() {
+        // ส่งข้อความภาษาอังกฤษไปแปล
+        openGoogleTranslate(hadith.hadithEnglish);
+    };
     // ผูก Event แบบปลอดภัย
     document.getElementById('copyBtn').onclick = () => copyToClipboard(fullContent);
     document.getElementById('lineBtn').onclick = () => {
@@ -225,6 +254,7 @@ function showToast(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
 
 
 
