@@ -95,59 +95,6 @@ function openGoogleTranslate(text) {
     window.open(url, '_blank');
 }
 
-// function openGoogleTranslate(text) {
-//     // สร้าง Form ชั่วคราวขึ้นมาเพื่อส่งข้อมูลแบบ POST/GET 
-//     // วิธีนี้เสถียรกว่าบน Android 15
-//     const form = document.createElement('form');
-//     form.method = 'GET';
-//     form.action = 'https://translate.google.com/';
-//     form.target = '_blank'; // เปิด Tab ใหม่
-
-//     // กำหนด Parameter ตามที่ Google ต้องการ
-//     const params = {
-//         sl: 'en',
-//         tl: 'th',
-//         text: text,
-//         op: 'translate'
-//     };
-
-//     for (const key in params) {
-//         if (params.hasOwnProperty(key)) {
-//             const hiddenField = document.createElement('input');
-//             hiddenField.type = 'hidden';
-//             hiddenField.name = key;
-//             hiddenField.value = params[key];
-//             form.appendChild(hiddenField);
-//         }
-//     }
-
-//     document.body.appendChild(form);
-//     form.submit(); // ส่งข้อมูล
-//     document.body.removeChild(form); // ลบออกเมื่อเสร็จสิ้น
-// }
-
-
-// function openGoogleTranslate(text) {
-//     // 1. จัดการข้อความ: ตัดส่วนเกินและ Encode ให้ปลอดภัยที่สุด
-//     const cleanText = text.trim();
-    
-//     // 2. ใช้ URL รูปแบบใหม่ที่ Mobile Browser รองรับได้เสถียรกว่า
-//     const baseUrl = "https://translate.google.com/";
-//     const params = `?sl=en&tl=th&text=${encodeURIComponent(cleanText)}&op=translate`;
-//     const finalUrl = baseUrl + params;
-
-//     // 3. บน Android บางครั้ง window.open แบบปกติจะถูก Popup Blocker บล็อก
-//     // เราจะใช้การสร้าง Anchor Element ชั่วคราวแล้วจำลองการคลิกแทน
-//     const a = document.createElement('a');
-//     a.href = finalUrl;
-//     a.target = '_blank';
-//     a.rel = 'noopener noreferrer';
-//     document.body.appendChild(a);
-//     a.click();
-//     document.body.removeChild(a);
-// }
-
-// ... (ส่วนการค้นหาและแปลภาษาเหมือนเดิม)
 
 // ฟังก์ชันดึงข้อมูลและจัดการ UI (แก้ไขการส่งตัวแปร)
 function renderUI(hadith, thaiText) {
@@ -183,7 +130,7 @@ function renderUI(hadith, thaiText) {
                 
                 <div class="action-buttons" style="margin-top:10px;">
                     <button id="gtBtn" class="btn-secondary" style="width:100%; cursor:pointer;">
-                        🌐 แปลด้วย Google Translate
+                        🌐 เปิดคำแปลใน Google Translate
                     </button>
                                     
                 </div>
@@ -206,77 +153,15 @@ function renderUI(hadith, thaiText) {
 
 
 
-// function renderUI(hadith, thaiText) {
-//     const displayArea = document.getElementById('displayArea');
-//     const googleTranslateUrl = `https://translate.google.com/?sl=en&tl=th&text=${encodeURIComponent(hadith.hadithEnglish)}&op=translate`;
-
-//     // เตรียมข้อความสำหรับแชร์
-//     const shareContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
-
-//     displayArea.innerHTML = `
-//         <div class="hadith-card">
-//             <div style="margin-bottom:15px; display:flex; justify-content:space-between;">
-//                 <span class="badge" style="background:#eee; padding:3px 8px; border-radius:4px; font-size:0.8rem;">
-//                     ${hadith.book.bookName} No. ${hadith.hadithNumber}
-//                 </span>
-//                 <span style="font-size:0.8rem; color:#27ae60; font-weight:bold;">● ${hadith.status}</span>
-//             </div>
-            
-//             <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
-            
-//             <div class="english-box">
-//                 <p>${hadith.hadithEnglish}</p>
-//             </div>
-
-//             <div class="thai-box">
-//                 <span class="translate-badge">คำแปลไทยเบื้องต้น</span>
-//                 <p>${thaiText}</p>
-                
-//                 <div class="action-buttons">
-//                     <a href="${googleTranslateUrl}" target="_blank" class="btn-secondary">
-//                         <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" width="16" style="margin-right:5px;">
-//                         เปิดคำแปลใน Google Translate
-//                     </a>
-//                 </div>
-//             </div>
-
-//             <div class="share-bar">
-//                 <button class="btn-share btn-copy" onclick="copyToClipboard(\`${shareContent.replace(/`/g, '\\`')}\`)">
-//                     📋 คัดลอก
-//                 </button>
-//                 <button class="btn-share btn-line" onclick="shareToLine(\`${shareContent.replace(/`/g, '\\`')}\`)">
-//                     LINE
-//                 </button>
-//                 <button class="btn-share btn-fb" onclick="shareToFB()">
-//                     Facebook
-//                 </button>
-//             </div>
-
-//             <div style="margin-top: 15px; font-size: 0.75rem; color: #aaa;">
-//                 Narrated by: ${hadith.englishNarrator}
-//             </div>
-//         </div>
-//     `;
-// }
-
-// ฟังก์ชันคัดลอกไปยังคลิปบอร์ด
-
-// function copyToClipboard(text) {
-//     navigator.clipboard.writeText(text).then(() => {
-//         showToast("คัดลอกลงคลิปบอร์ดแล้ว!");
-//     });
-// }
-
-
-
 // ฟังก์ชันแสดง Notification เล็กๆ
-function showToast(message) {
-    const toast = document.createElement("div");
-    toast.className = "toast";
-    toast.innerText = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
-}
+// function showToast(message) {
+//     const toast = document.createElement("div");
+//     toast.className = "toast";
+//     toast.innerText = message;
+//     document.body.appendChild(toast);
+//     setTimeout(() => toast.remove(), 2500);
+// }
+
 
 
 
