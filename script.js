@@ -52,52 +52,92 @@ async function translateToThai(text) {
 //
 // ... (ส่วนการค้นหาและแปลภาษา MyMemory เหมือนเดิม)
 
+
+// ... (ส่วนการค้นหาและแปลภาษาเหมือนเดิม)
+
 function renderUI(hadith, thaiText) {
     const displayArea = document.getElementById('displayArea');
-    
-    // สร้าง URL สำหรับ Google Translate โดยเฉพาะ
-    // ใช้เนื้อหาภาษาอังกฤษเป็นต้นฉบับในการแปล
     const googleTranslateUrl = `https://translate.google.com/?sl=en&tl=th&text=${encodeURIComponent(hadith.hadithEnglish)}&op=translate`;
+
+    // เตรียมข้อความสำหรับแชร์
+    const shareContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
 
     displayArea.innerHTML = `
         <div class="hadith-card">
-            <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <span class="badge" style="background:#eee; padding:3px 8px; border-radius:4px; font-size:0.8rem; font-weight:bold;">
-                        ${hadith.book.bookName}
-                    </span>
-                    <span class="badge" style="background:var(--accent); color:white; padding:3px 8px; border-radius:4px; font-size:0.8rem;">
-                        No. ${hadith.hadithNumber}
-                    </span>
-                </div>
-                <span style="font-size:0.8rem; color:${hadith.status === 'Sahih' ? '#27ae60' : '#e67e22'}; font-weight:bold;">
-                    ● ${hadith.status}
+            <div style="margin-bottom:15px; display:flex; justify-content:space-between;">
+                <span class="badge" style="background:#eee; padding:3px 8px; border-radius:4px; font-size:0.8rem;">
+                    ${hadith.book.bookName} No. ${hadith.hadithNumber}
                 </span>
+                <span style="font-size:0.8rem; color:#27ae60; font-weight:bold;">● ${hadith.status}</span>
             </div>
             
-            <div class="arabic-box" style="font-size: 1.0rem;">${hadith.hadithArabic}</div>
+            <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
             
-            <div class="english-box" style="background:#fdfdfd; padding:15px; border-radius:8px; border:1px solid #eee; margin-top:20px;">
-                <strong style="color:#666; font-size:0.75rem; letter-spacing:1px;">ENGLISH VERSION</strong><br>
-                <p style="margin-top:10px; line-height:1.6;">${hadith.hadithEnglish}</p>
+            <div class="english-box">
+                <p>${hadith.hadithEnglish}</p>
             </div>
 
-            <div class="thai-box" style="border-left:4px solid var(--primary); background:#f0f7f2; margin-top:20px;">
-                <span class="translate-badge" style="background:var(--primary);">คำแปลไทยเบื้องต้น</span>
-                <p style="margin-top:10px; line-height:1.7;">${thaiText}</p>
+            <div class="thai-box">
+                <span class="translate-badge">คำแปลไทยเบื้องต้น</span>
+                <p>${thaiText}</p>
                 
                 <div class="action-buttons">
                     <a href="${googleTranslateUrl}" target="_blank" class="btn-secondary">
-                        <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" alt="G">
+                        <img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" width="16" style="margin-right:5px;">
                         เปิดคำแปลใน Google Translate
                     </a>
                 </div>
             </div>
 
-            <div style="margin-top: 20px; font-size: 0.8rem; color: #888; border-top:1px solid #eee; padding-top:15px;">
-                <strong>Narrated by:</strong> ${hadith.englishNarrator}
+            <div class="share-bar">
+                <button class="btn-share btn-copy" onclick="copyToClipboard(\`${shareContent.replace(/`/g, '\\`')}\`)">
+                    📋 คัดลอก
+                </button>
+                <button class="btn-share btn-line" onclick="shareToLine(\`${shareContent.replace(/`/g, '\\`')}\`)">
+                    LINE
+                </button>
+                <button class="btn-share btn-fb" onclick="shareToFB()">
+                    Facebook
+                </button>
+            </div>
+
+            <div style="margin-top: 15px; font-size: 0.75rem; color: #aaa;">
+                Narrated by: ${hadith.englishNarrator}
             </div>
         </div>
     `;
 }
+
+// ฟังก์ชันคัดลอกไปยังคลิปบอร์ด
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showToast("คัดลอกลงคลิปบอร์ดแล้ว!");
+    });
+}
+
+// ฟังก์ชันแชร์ไป LINE
+function shareToLine(text) {
+    const url = `https://social-plugins.line.me/lineit/share?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+}
+
+// ฟังก์ชันแชร์ไป Facebook
+function shareToFB() {
+    // การแชร์เนื้อหาข้อความยาวๆ โดยตรงไป FB ผ่าน URL มักทำไม่ได้ (FB จะดึง Metadata จาก URL แทน)
+    // ดังนั้นจะใช้การแชร์ URL ของหน้าเว็บปัจจุบัน
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+    window.open(url, '_blank');
+}
+
+// ฟังก์ชันแสดง Notification เล็กๆ
+function showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerText = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+}
+
+
+
 
