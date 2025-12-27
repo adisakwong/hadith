@@ -1,0 +1,132 @@
+:root {
+    --primary: #1a4d2e;
+    --accent: #ff9f1c;
+    --thai-color: #2c3e50;
+}
+
+* { box-sizing: border-box; }
+body {
+    font-family: 'Sarabun', sans-serif;
+    background: #f0f2f5;
+    margin: 0; padding: 15px;
+}
+
+.app-container { max-width: 800px; margin: 0 auto; }
+
+header { text-align: center; margin-bottom: 25px; }
+.logo { font-size: 2.2rem; font-weight: 700; color: var(--primary); }
+.logo span { color: var(--accent); }
+
+.search-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.input-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.field { flex: 1; min-width: 150px; }
+label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: #666; }
+
+select, input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 13px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Card Styling */
+.hadith-card {
+    background: white;
+    margin-top: 20px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.arabic-box {
+    font-family: 'Amiri', serif;
+    direction: rtl;
+    font-size: 1.8rem;
+    line-height: 2.2;
+    color: #222;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.english-box { margin-top: 20px; color: #555; font-style: italic; }
+
+.thai-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #eef5ff;
+    border-radius: 8px;
+    color: var(--thai-color);
+    line-height: 1.7;
+}
+
+.translate-badge {
+    background: #4285f4;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+
+/* 
+ */
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    background: #ffffff;
+    color: #4285f4;
+    border: 1px solid #4285f4;
+    padding: 8px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #f1f6ff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-secondary img {
+    width: 16px;
+    margin-right: 8px;
+}
+/*  */
+
+@media (max-width: 600px) {
+    .input-grid { flex-direction: column; align-items: stretch; }
+}

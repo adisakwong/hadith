@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadith Search SPA - Arabic/English/Thai</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">Hadith<span>AI</span></div>
+            <p>ค้นหาฮาดีส และแปลไทยอัตโนมัติ</p>
+        </header>
+
+        <section class="search-section">
+            <div class="input-grid">
+                <div class="field">
+                    <label>เลือกชุดฮาดีส</label>
+                    <select id="bookSlug">
+                        <option value="sahih-bukhari">Sahih Bukhari</option>
+                        <option value="sahih-muslim">Sahih Muslim</option>
+                        <option value="al-tirmidhi">Jami At-Tirmidhi</option>
+                        <option value="sunan-abu-dawood">Sunan Abu Dawood</option>
+                        <option value="sunan-ibn-majah">Sunan Ibn Majah</option>
+                        <option value="sunan-nasai">Sunan An-Nasa'i</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>หมายเลขฮาดีส</label>
+                    <input type="number" id="hadithNumber" placeholder="เลขฮาดีส...">
+                </div>
+                <button id="searchBtn">ค้นหา</button>
+            </div>
+        </section>
+
+        <main id="displayArea">
+            <div class="placeholder-msg" style="margin-top:20px; color:#666; font-size: 1.50rem; text-align:center">กรุณาเลือกชุดฮาดีสและป้อนหมายเลขฮาดีสที่ต้องการค้นหา</div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
