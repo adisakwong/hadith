@@ -10,21 +10,24 @@
 <body>
     <div class="app-container">
         <header>
-            <div class="logo">Hadith<span>AI</span></div>
-            <p>ค้นหาฮาดีส และแปลไทยอัตโนมัติ</p>
+            <div class="logo">Hadith<span>Thai<sup style="font-size: 1.0rem;">&copy;</sup></span></div>
+            <p style="margin-top:1px; color:#666;">ค้นหาฮาดีส และแปลไทยอัตโนมัติ</p>
         </header>
 
         <section class="search-section">
             <div class="input-grid">
                 <div class="field">
-                    <label>เลือกชุดฮาดีส</label>
+                    <label>เลือกชุดตำราฮาดีส</label>
                     <select id="bookSlug">
                         <option value="sahih-bukhari">Sahih Bukhari</option>
                         <option value="sahih-muslim">Sahih Muslim</option>
-                        <option value="al-tirmidhi">Jami At-Tirmidhi</option>
-                        <option value="sunan-abu-dawood">Sunan Abu Dawood</option>
-                        <option value="sunan-ibn-majah">Sunan Ibn Majah</option>
+                        <option value="al-tirmidhi">Jami' Al-Tirmidhi</option>
+                        <option value="abu-dawood">Sunan Abu Dawood</option>
+                        <option value="ibn-e-majah">Sunan Ibn Majah</option>
                         <option value="sunan-nasai">Sunan An-Nasa'i</option>
+                        <option value="mishkat">Mishkat Al-Masabih</option>
+                        <option value="musnad-ahmad">Musnad Ahmad</option>
+                        <option value="al-silsila-sahiha">Al-Silsila Sahiha</option>
                     </select>
                 </div>
                 <div class="field">
@@ -36,10 +39,11 @@
         </section>
 
         <main id="displayArea">
-            <div class="placeholder-msg" style="margin-top:20px; color:#666; font-size: 1.50rem; text-align:center">กรุณาเลือกชุดฮาดีสและป้อนหมายเลขฮาดีสที่ต้องการค้นหา</div>
+            <div class="placeholder-msg" style="margin-top:20px; color:#666; font-size: 1.50rem; text-align:center">กรุณาเลือกชุดตำราฮาดีสและหมายเลขฮาดีสที่ต้องการค้นหา</div>
         </main>
     </div>
     <script src="script.js"></script>
 </body>
 
 </html>
+
