@@ -138,9 +138,9 @@ function renderUI(hadith, thaiText) {
 
             <div class="share-bar">
                 <button class="btn-share btn-copy" id="copyBtn">📋 คัดลอกข้อความ</button>
+                &nbsp;&nbsp;&nbsp;
+                <p style="margin-top:1px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีสจาก: Hadithapi.com <br> แปลไทยอัตโนมัติด้วย: MyMemory API</p>
                 
-                <p style="margin-top:1px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีสจาก: Hadithapi.com</p>
-                <p style="margin-top:1px; color:#666; font-size:0.7rem; text-align:center">แปลไทยอัตโนมัติด้วย: MyMemory API</p>
              </div>
         </div>
     `;
@@ -163,6 +163,7 @@ function showToast(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
 
 
 
