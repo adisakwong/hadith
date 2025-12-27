@@ -140,20 +140,15 @@ function renderUI(hadith, thaiText) {
                 
                 <div class="action-buttons" style="margin-top:10px;">
                     <button id="gtBtn" class="btn-secondary" style="width:100%; cursor:pointer;">
-                        🌐 เปิดใน Google Translate
+                        🌐 แปลใน Google Translate
                     </button>
-                
-                    // <button onclick="window.open('${googleTranslateUrl}', '_blank')" class="btn-secondary" style="cursor:pointer; width:100%; justify-content:center;">
-                    //     🌐 เปิดใน Google Translate
-                    // </button>
-                    
+                                    
                 </div>
             </div>
 
             <div class="share-bar">
                 <button class="btn-share btn-copy" id="copyBtn">📋 คัดลอกข้อความ</button>
-                <button class="btn-share btn-line" id="lineBtn">LINE</button>
-            </div>
+             </div>
         </div>
     `;
 
@@ -164,9 +159,6 @@ function renderUI(hadith, thaiText) {
     };
     // ผูก Event แบบปลอดภัย
     document.getElementById('copyBtn').onclick = () => copyToClipboard(fullContent);
-    document.getElementById('lineBtn').onclick = () => {
-        window.open(`https://social-plugins.line.me/lineit/share?text=${encodeURIComponent(fullContent)}`, '_blank');
-    };
 }
 
 
@@ -232,19 +224,7 @@ function renderUI(hadith, thaiText) {
 //     });
 // }
 
-// ฟังก์ชันแชร์ไป LINE
-function shareToLine(text) {
-    const url = `https://social-plugins.line.me/lineit/share?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-}
 
-// ฟังก์ชันแชร์ไป Facebook
-function shareToFB() {
-    // การแชร์เนื้อหาข้อความยาวๆ โดยตรงไป FB ผ่าน URL มักทำไม่ได้ (FB จะดึง Metadata จาก URL แทน)
-    // ดังนั้นจะใช้การแชร์ URL ของหน้าเว็บปัจจุบัน
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
-    window.open(url, '_blank');
-}
 
 // ฟังก์ชันแสดง Notification เล็กๆ
 function showToast(message) {
@@ -254,6 +234,7 @@ function showToast(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
 
 
 
