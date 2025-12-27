@@ -84,26 +84,59 @@ function fallbackCopy(text) {
     }
     document.body.removeChild(textArea);
 }
+//
 
 function openGoogleTranslate(text) {
-    // 1. จัดการข้อความ: ตัดส่วนเกินและ Encode ให้ปลอดภัยที่สุด
-    const cleanText = text.trim();
-    
-    // 2. ใช้ URL รูปแบบใหม่ที่ Mobile Browser รองรับได้เสถียรกว่า
-    const baseUrl = "https://translate.google.com/";
-    const params = `?sl=en&tl=th&text=${encodeURIComponent(cleanText)}&op=translate`;
-    const finalUrl = baseUrl + params;
+    // สร้าง Form ชั่วคราวขึ้นมาเพื่อส่งข้อมูลแบบ POST/GET 
+    // วิธีนี้เสถียรกว่าบน Android 15
+    const form = document.createElement('form');
+    form.method = 'GET';
+    form.action = 'https://translate.google.com/';
+    form.target = '_blank'; // เปิด Tab ใหม่
 
-    // 3. บน Android บางครั้ง window.open แบบปกติจะถูก Popup Blocker บล็อก
-    // เราจะใช้การสร้าง Anchor Element ชั่วคราวแล้วจำลองการคลิกแทน
-    const a = document.createElement('a');
-    a.href = finalUrl;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // กำหนด Parameter ตามที่ Google ต้องการ
+    const params = {
+        sl: 'en',
+        tl: 'th',
+        text: text,
+        op: 'translate'
+    };
+
+    for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = key;
+            hiddenField.value = params[key];
+            form.appendChild(hiddenField);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit(); // ส่งข้อมูล
+    document.body.removeChild(form); // ลบออกเมื่อเสร็จสิ้น
 }
+
+// function openGoogleTranslate(text) {
+//     // 1. จัดการข้อความ: ตัดส่วนเกินและ Encode ให้ปลอดภัยที่สุด
+//     const cleanText = text.trim();
+    
+//     // 2. ใช้ URL รูปแบบใหม่ที่ Mobile Browser รองรับได้เสถียรกว่า
+//     const baseUrl = "https://translate.google.com/";
+//     const params = `?sl=en&tl=th&text=${encodeURIComponent(cleanText)}&op=translate`;
+//     const finalUrl = baseUrl + params;
+
+//     // 3. บน Android บางครั้ง window.open แบบปกติจะถูก Popup Blocker บล็อก
+//     // เราจะใช้การสร้าง Anchor Element ชั่วคราวแล้วจำลองการคลิกแทน
+//     const a = document.createElement('a');
+//     a.href = finalUrl;
+//     a.target = '_blank';
+//     a.rel = 'noopener noreferrer';
+//     document.body.appendChild(a);
+//     a.click();
+//     document.body.removeChild(a);
+// }
+
 // ... (ส่วนการค้นหาและแปลภาษาเหมือนเดิม)
 
 // ฟังก์ชันดึงข้อมูลและจัดการ UI (แก้ไขการส่งตัวแปร)
@@ -234,6 +267,7 @@ function showToast(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
 
 
 
