@@ -112,9 +112,18 @@ function renderUI(hadith, thaiText) {
 
     displayArea.innerHTML = `
         <div class="hadith-card">
-            <div style="margin-bottom:15px; display:flex; justify-content:space-between;">
-                <span class="badge" style="background:#eee; padding:3px 8px; border-radius:4px; font-size:0.8rem; font-weight:bold;">
-                    ${hadith.book.bookName} No. ${hadith.hadithNumber}
+
+            <div style="margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <span class="badge" style="background:#eee; padding:3px 8px; border-radius:4px; font-size:0.8rem; font-weight:bold;">
+                        ${hadith.book.bookName}
+                    </span>
+                    <span class="badge" style="background:var(--accent); color:white; padding:3px 8px; border-radius:4px; font-size:0.8rem;">
+                        No. ${hadith.hadithNumber}
+                    </span>
+                </div>
+                <span style="font-size:0.8rem; color:${hadith.status === 'Sahih' ? '#27ae60' : '#e67e22'}; font-weight:bold;">
+                    ● ${hadith.status}
                 </span>
             </div>
             
@@ -142,7 +151,7 @@ function renderUI(hadith, thaiText) {
              </div>
 
               <center>
-                <p style="margin-top:10px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: Hadithapi.com <br> แปลไทย: MyMemory API</p>
+                <p style="margin-top:15px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: Hadithapi.com <br> แปลไทย: MyMemory API</p>
               </center>
         </div>
     `;
@@ -165,6 +174,7 @@ function showToast(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
 
 
 
