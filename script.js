@@ -142,7 +142,7 @@ function renderUI(hadith, thaiText) {
              </div>
 
               <center>
-                <p style="margin-top:1px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: Hadithapi.com <br> แปลไทย: MyMemory API</p>
+                <p style="margin-top:10px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: Hadithapi.com <br> แปลไทย: MyMemory API</p>
               </center>
         </div>
     `;
@@ -165,6 +165,7 @@ function showToast(message) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 2500);
 }
+
 
 
 
