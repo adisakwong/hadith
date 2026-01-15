@@ -108,7 +108,8 @@ function renderUI(hadith, thaiText) {
     const googleTranslateUrl = `https://translate.google.com/?sl=en&tl=th&text=${encodeURIComponent(hadith.hadithEnglish)}&op=translate`;
 
     // สร้างเนื้อหาที่จะแชร์
-    const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
+    //const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
+    const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber} ● ${hadith.status}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
 
     // ลบการแสดงผลภาษาอาหรับ 
     // <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
