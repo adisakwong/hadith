@@ -109,7 +109,7 @@ function renderUI(hadith, thaiText) {
 
     // สร้างเนื้อหาที่จะแชร์
     //const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
-    const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber} ● ${hadith.status}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
+    const fullContent = `[Hadith] ${hadith.book.bookName}\nNo. ${hadith.hadithNumber} ● ${hadith.status}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
 
     // ลบการแสดงผลภาษาอาหรับ 
     // <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
@@ -140,10 +140,6 @@ function renderUI(hadith, thaiText) {
             <div class="thai-box" style="border-left:4px solid #1a4d2e; background:#f0f7f2; margin-top:15px; padding:15px; border-radius:8px;">
                 <span style="font-size:0.7rem; background:#1a4d2e; color:white; padding:2px 5px; border-radius:3px;">แปลไทยอัตโนมัติ</span>
                 <p style="margin-top:10px;">${thaiText}</p>
-
-                <p style="margin-top:10px;">
-                  ${hadith.book.bookName}  No. ${hadith.hadithNumber} ● ${hadith.status}
-                </p>
                 
                 <div class="action-buttons" style="margin-top:10px;">
                     <button id="gtBtn" class="btn-secondary" style="width:100%; cursor:pointer;">
