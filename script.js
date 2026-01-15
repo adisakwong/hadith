@@ -122,10 +122,13 @@ function renderUI(hadith, thaiText) {
 
     // สร้างเนื้อหาที่จะแชร์
     //const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
-    const fullContent = `[Hadith] ${hadith.book.bookName}\nNo. ${hadith.hadithNumber} ● ${hadith.status}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
+    const fullContent = `[Hadith] ${hadith.book.bookName}\nNo. ${hadith.hadithNumber} ● ${hadith.status}\n\nArabic: ${hadith.hadithArabic}\n\nแปลไทย: ${thaiText}`;
 
-    // ลบการแสดงผลภาษาอาหรับ 
+    // ส่วนาแสดงผลภาษาอาหรับ และอังกฤษ 
     // <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
+    // <div class="english-box" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-top:15px;">
+    //             <p>${hadith.hadithEnglish}</p>
+    // </div>
 
     displayArea.innerHTML = `
         <div class="hadith-card">
@@ -145,10 +148,9 @@ function renderUI(hadith, thaiText) {
             </div>
             
             
+            <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
+
             
-            <div class="english-box" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-top:15px;">
-                <p>${hadith.hadithEnglish}</p>
-            </div>
 
             <div class="thai-box" style="border-left:4px solid #1a4d2e; background:#f0f7f2; margin-top:15px; padding:15px; border-radius:8px;">
                 <span style="font-size:0.7rem; background:#1a4d2e; color:white; padding:2px 5px; border-radius:3px;">แปลไทยอัตโนมัติ</span>
