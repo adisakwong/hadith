@@ -32,19 +32,32 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
 });
 
 // ฟังก์ชันแปลภาษาใหม่โดยใช้ MyMemory API (เสถียรกว่าและฟรี)
+// ฟังก์ชันแปลภาษาใหม่โดยใช้ Google Apps Script (ฟรีและไม่จำกัด)
 async function translateToThai(text) {
-    try {
-        // จำกัดความยาวข้อความเพื่อความเสถียร (MyMemory รับได้ประมาณ 500-1000 ตัวอักษรต่อครั้ง)
-        const cleanText = text.substring(0, 1000);
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(cleanText)}&langpair=en|th`);
-        const data = await res.json();
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzIAXuuLtnDl4-TqssXiqEbNzlR6q5Ff07Pwfr7TttxY0SG0nmSQKRJ5vSHzsORDWBv/exec';
 
-        if (data.responseData && data.responseData.translatedText) {
-            return data.responseData.translatedText;
+    try {
+        // ใช้โหมด POST เพื่อรองรับข้อความยาวๆ
+        // ส่งเป็น text/plain เพื่อลดปัญหา CORS Preflight ในบางเบราว์เซอร์ แต่ข้างในเป็น JSON string
+        const response = await fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                q: text,
+                source: "en",
+                target: "th"
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+            return data.translation;
         } else {
-            return "ไม่สามารถแปลได้ในขณะนี้: " + data.responseDetails;
+            console.error("Translation Error Details:", data);
+            return "ไม่สามารถแปลได้: " + (data.message || "Unknown error");
         }
     } catch (e) {
+        console.error("Translation Fetch Error:", e);
         return "เกิดข้อผิดพลาดในการแปล: " + e.message;
     }
 }
@@ -155,7 +168,7 @@ function renderUI(hadith, thaiText) {
              </div>
 
               <center>
-                <p style="margin-top:15px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: HadithAPI.com <br> แปลไทย: MyMemory API</p>
+                <p style="margin-top:15px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: HadithAPI.com <br> แปลไทย: Google Translate (via Apps Script)</p>
               </center>
         </div>
     `;
