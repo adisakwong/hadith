@@ -1,5 +1,5 @@
 // เปลี่ยน API_KEY เป็นคีย์ที่คุณได้จาก hadithapi.com
-const HADITH_API_KEY = '$2y$10$Ig3V5LgHATTXyMo2s50kEg2lHABR3VGi6k0PT8DbWEoSYbAvL6'; 
+const HADITH_API_KEY = '$2y$10$Ig3V5LgHATTXyMo2s50kEg2lHABR3VGi6k0PT8DbWEoSYbAvL6';
 
 document.getElementById('searchBtn').addEventListener('click', async () => {
     const book = document.getElementById('bookSlug').value;
@@ -35,11 +35,11 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
 async function translateToThai(text) {
     try {
         // จำกัดความยาวข้อความเพื่อความเสถียร (MyMemory รับได้ประมาณ 500-1000 ตัวอักษรต่อครั้ง)
-        const cleanText = text.substring(0, 1000); 
+        const cleanText = text.substring(0, 1000);
         const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(cleanText)}&langpair=en|th`);
         const data = await res.json();
-        
-        if(data.responseData && data.responseData.translatedText) {
+
+        if (data.responseData && data.responseData.translatedText) {
             return data.responseData.translatedText;
         } else {
             return "ไม่สามารถแปลได้ในขณะนี้: " + data.responseDetails;
@@ -91,7 +91,7 @@ function openGoogleTranslate(text) {
     // ซึ่งมักจะเลี่ยงการเปิดแอปได้ดีกว่าใน Android 15
     const cleanText = text.trim().substring(0, 1500); // จำกัดความยาว
     const url = `https://translate.google.com/m?sl=en&tl=th&q=${encodeURIComponent(cleanText)}`;
-    
+
     window.open(url, '_blank');
 }
 
@@ -99,7 +99,7 @@ function openGoogleTranslate(text) {
 // ฟังก์ชันดึงข้อมูลและจัดการ UI (แก้ไขการส่งตัวแปร)
 function renderUI(hadith, thaiText) {
     const displayArea = document.getElementById('displayArea');
-    
+
     // ล้างข้อความพิเศษเพื่อไม่ให้ JavaScript Error
     const cleanEn = hadith.hadithEnglish.replace(/'/g, "\\'").replace(/"/g, '\\"');
     const cleanAr = hadith.hadithArabic.replace(/'/g, "\\'").replace(/"/g, '\\"');
@@ -109,6 +109,9 @@ function renderUI(hadith, thaiText) {
 
     // สร้างเนื้อหาที่จะแชร์
     const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
+
+    // ลบการแสดงผลภาษาอาหรับ 
+    // <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
 
     displayArea.innerHTML = `
         <div class="hadith-card">
@@ -127,7 +130,7 @@ function renderUI(hadith, thaiText) {
                 </span>
             </div>
             
-            <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
+            
             
             <div class="english-box" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-top:15px;">
                 <p>${hadith.hadithEnglish}</p>
@@ -136,6 +139,10 @@ function renderUI(hadith, thaiText) {
             <div class="thai-box" style="border-left:4px solid #1a4d2e; background:#f0f7f2; margin-top:15px; padding:15px; border-radius:8px;">
                 <span style="font-size:0.7rem; background:#1a4d2e; color:white; padding:2px 5px; border-radius:3px;">แปลไทยอัตโนมัติ</span>
                 <p style="margin-top:10px;">${thaiText}</p>
+
+                <p style="margin-top:10px;">
+                  ${hadith.book.bookName}  No. ${hadith.hadithNumber} ● ${hadith.status}
+                </p>
                 
                 <div class="action-buttons" style="margin-top:10px;">
                     <button id="gtBtn" class="btn-secondary" style="width:100%; cursor:pointer;">
@@ -157,7 +164,7 @@ function renderUI(hadith, thaiText) {
     `;
 
     // ผูก Event สำหรับ Android โดยเฉพาะ
-    document.getElementById('gtBtn').onclick = function() {
+    document.getElementById('gtBtn').onclick = function () {
         // ส่งข้อความภาษาอังกฤษไปแปล
         openGoogleTranslate(hadith.hadithEnglish);
     };
