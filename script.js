@@ -9,7 +9,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
 
     if (!number) return alert("โปรดใส่หมายเลขฮาดีส");
 
-    displayArea.innerHTML = '<div style="text-align:center; padding:20px;">กำลังดึงข้อมูลฮาดีสและแปลภาษา...</div>';
+    displayArea.innerHTML = '<div style="text-align:center; padding:20px; color:orange">กำลังดึงข้อมูลฮาดีสและแปลภาษา...</div>';
 
     try {
         let hadithData = null;
@@ -252,7 +252,12 @@ function renderUI(hadith, thaiText) {
 
     // สร้างเนื้อหาที่จะแชร์
     //const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
-    const fullContent = `[Hadith] ${hadith.book.bookName}\nNo. ${hadith.hadithNumber} ● ${hadith.status}\n\nArabic: ${hadith.hadithArabic}\n\nแปลไทย: ${thaiText}`;
+
+    const apiSource = document.getElementById('apiSource').value;
+    const sourceName = apiSource === 'fawazahmed' ? 'FawazAhmed (Github)' : (apiSource === 'hadithapi-pages' ? 'HadithAPI.pages.dev' : 'HadithAPI.com');
+
+    const fullContent = `[Hadith] ${hadith.book.bookName}\nNo. ${hadith.hadithNumber} ● ${hadith.status}\n\nArabic: ${hadith.hadithArabic}\n\nแปลไทย: ${thaiText}\n\nแหล่งข้อมูล: ${sourceName}`;
+
 
     // ส่วนาแสดงผลภาษาอาหรับ และอังกฤษ 
     // <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
