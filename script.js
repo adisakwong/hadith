@@ -9,7 +9,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
 
     if (!number) return alert("โปรดใส่หมายเลขฮาดีส");
 
-    displayArea.innerHTML = '<div style="text-align:center; padding:20px; color:orange">กำลังดึงข้อมูลฮาดีสและแปลภาษา...</div>';
+    displayArea.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div>กำลังดึงข้อมูลฮาดีสและแปลภาษา...</div>';
 
     try {
         let hadithData = null;
