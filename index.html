@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hadith Search - Arabic/English/Thai</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Sarabun:wght@300;400;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="app-container">
         <header>
@@ -16,6 +19,14 @@
 
         <section class="search-section">
             <div class="input-grid">
+                <div class="field">
+                    <label>เลือกแหล่งข้อมูล</label>
+                    <select id="apiSource">
+                        <option value="hadithapi-com">HadithAPI.com (มีภาษาอาหรับ)</option>
+                        <option value="hadithapi-pages">HadithAPI.pages.dev (ไม่มีภาษาอาหรับ)</option>
+                        <option value="fawazahmed">FawazAhmed API (Github)</option>
+                    </select>
+                </div>
                 <div class="field">
                     <label>เลือกชุดตำราฮาดีส</label>
                     <select id="bookSlug">
@@ -39,11 +50,11 @@
         </section>
 
         <main id="displayArea">
-            <div class="placeholder-msg" style="margin-top:20px; color:#666; font-size: 1.50rem; text-align:center">กรุณาเลือกชุดตำราฮาดีสและหมายเลขฮาดีสที่ต้องการค้นหา</div>
+            <div class="placeholder-msg" style="margin-top:20px; color:#666; font-size: 1.50rem; text-align:center">
+                กรุณาเลือกชุดตำราฮาดีสและหมายเลขฮาดีสที่ต้องการค้นหา</div>
         </main>
     </div>
     <script src="script.js"></script>
 </body>
 
 </html>
-

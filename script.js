@@ -2,6 +2,7 @@
 const HADITH_API_KEY = '$2y$10$Ig3V5LgHATTXyMo2s50kEg2lHABR3VGi6k0PT8DbWEoSYbAvL6';
 
 document.getElementById('searchBtn').addEventListener('click', async () => {
+    const source = document.getElementById('apiSource').value;
     const book = document.getElementById('bookSlug').value;
     const number = document.getElementById('hadithNumber').value;
     const displayArea = document.getElementById('displayArea');
@@ -11,22 +12,151 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
     displayArea.innerHTML = '<div style="text-align:center; padding:20px;">กำลังดึงข้อมูลฮาดีสและแปลภาษา...</div>';
 
     try {
-        // 1. ดึงข้อมูลฮาดีสจาก HadithAPI
-        const hRes = await fetch(`https://hadithapi.com/api/hadiths?apiKey=${HADITH_API_KEY}&book=${book}&hadithNumber=${number}`);
-        const hData = await hRes.json();
+        let hadithData = null;
 
-        if (hData.status === 200 && hData.hadiths.data.length > 0) {
-            const hadith = hData.hadiths.data[0];
-            const enText = hadith.hadithEnglish;
+        if (source === 'hadithapi-pages') {
+            // 1. Logic for HadithAPI.pages.dev
+            const mapping = {
+                'sahih-bukhari': 'bukhari',
+                'sahih-muslim': 'muslim',
+                'al-tirmidhi': 'tirmidhi',
+                'abu-dawood': 'abudawud',
+                'ibn-e-majah': 'ibnmajah'
+            };
+            const mappedBook = mapping[book];
 
-            // 2. เรียกใช้ฟังก์ชันแปลภาษาใหม่ (MyMemory API)
+            if (!mappedBook) {
+                displayArea.innerHTML = '<div class="error" style="color:red; text-align:center;">ขออภัย! แหล่งข้อมูล HadithAPI.pages.dev รองรับเฉพาะ<br> Bukhari, Muslim, Tirmidhi, Abu Dawood, และ Ibn Majah เท่านั้น<br>โปรดเลือกแหล่งข้อมูลเป็น HadithAPI.com สำหรับตำราชุดนี้</div>';
+                return;
+            }
+
+            const targetUrl = `https://hadithapi.pages.dev/api/${mappedBook}/${number}`;
+            let data = null;
+            let errorMsg = "";
+
+            // Helper function to try fetching
+            const tryFetch = async (url) => {
+                const r = await fetch(url);
+                if (!r.ok) throw new Error(r.status);
+                return await r.json();
+            };
+
+            // Strategy: Direct -> Proxy 1 -> Proxy 2 -> Proxy 3
+            try {
+                // 1. Direct (เผื่อ browser รองรับหรือเป็น same origin)
+                data = await tryFetch(targetUrl);
+            } catch (e1) {
+                console.warn("Direct fetch failed/CORS:", e1);
+                try {
+                    // 2. CORSProxy.io
+                    data = await tryFetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
+                } catch (e2) {
+                    console.warn("Proxy 1 failed:", e2);
+                    try {
+                        // 3. AllOrigins
+                        data = await tryFetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
+                    } catch (e3) {
+                        console.warn("Proxy 2 failed:", e3);
+                        try {
+                            // 4. CodeTabs
+                            data = await tryFetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`);
+                        } catch (e4) {
+                            console.error("All proxies failed");
+                            errorMsg = e4.message; // Capture last error
+                        }
+                    }
+                }
+            }
+
+            if (!data) {
+                if (errorMsg === "404") {
+                    displayArea.innerHTML = '<div class="error">ขออภัย! ไม่พบข้อมูลหมายเลขนี้ในแหล่งข้อมูลใหม่</div>';
+                } else {
+                    displayArea.innerHTML = `<div class="error">ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้ (Error: ${errorMsg || "Connection Failed"})<br>โปรดลองเปลี่ยนแหล่งข้อมูลเป็น HadithAPI.com</div>`;
+                }
+                return;
+            }
+
+            if (data && data.hadith_english) {
+                // Normalize data
+                hadithData = {
+                    book: { bookName: data.book || book },
+                    hadithNumber: data.id,
+                    status: 'Sahih',
+                    hadithEnglish: data.hadith_english,
+                    hadithArabic: data.hadith_arabic || data.hadith_english // Fallback to English
+                };
+            }
+
+        } else if (source === 'fawazahmed') {
+            // 3. Logic for FawazAhmed API (Github)
+            const mapping = {
+                'sahih-bukhari': 'bukhari',
+                'sahih-muslim': 'muslim',
+                'al-tirmidhi': 'tirmidhi',
+                'abu-dawood': 'abudawud',
+                'ibn-e-majah': 'ibnmajah',
+                'sunan-nasai': 'nasai'
+            };
+            const mappedBook = mapping[book];
+
+            if (!mappedBook) {
+                displayArea.innerHTML = '<div class="error" style="color:red; text-align:center;">ขออภัย! แหล่งข้อมูล FawazAhmed รองรับเฉพาะ<br> Bukhari, Muslim, Tirmidhi, Abu Dawood, Ibn Majah และ Nasai เท่านั้น</div>';
+                return;
+            }
+
+            const engUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/eng-${mappedBook}/${number}.json`;
+            const araUrl = `https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/ara-${mappedBook}/${number}.json`;
+
+            // Helper to safe fetch
+            const safeFetch = async (url) => {
+                try {
+                    const r = await fetch(url);
+                    if (r.ok) return await r.json();
+                } catch (e) { console.warn("Fetch failed:", url, e); }
+                return null;
+            };
+
+            const [engData, araData] = await Promise.all([safeFetch(engUrl), safeFetch(araUrl)]);
+
+            if (!engData && !araData) {
+                displayArea.innerHTML = '<div class="error">ขออภัย! ไม่พบข้อมูลหมายเลขนี้ ในแหล่งข้อมูลนี้</div>';
+                return;
+            }
+
+            const primary = engData || araData;
+
+            if (primary && primary.hadiths && primary.hadiths[0]) {
+                hadithData = {
+                    book: { bookName: primary.metadata.name },
+                    hadithNumber: primary.hadiths[0].hadithnumber,
+                    status: 'Sahih', // Most are graded but simplistic view here
+                    hadithEnglish: engData?.hadiths[0]?.text || "(ไม่พบคำแปลภาษาอังกฤษ)",
+                    hadithArabic: araData?.hadiths[0]?.text || "ไม่พบข้อมูลภาษาอาหรับ"
+                };
+            }
+
+        } else {
+            // 2. Logic for HadithAPI.com (Original)
+            const hRes = await fetch(`https://hadithapi.com/api/hadiths?apiKey=${HADITH_API_KEY}&book=${book}&hadithNumber=${number}`);
+            const hData = await hRes.json();
+
+            if (hData.status === 200 && hData.hadiths.data.length > 0) {
+                hadithData = hData.hadiths.data[0];
+            }
+        }
+
+        if (hadithData) {
+            const enText = hadithData.hadithEnglish;
+            // เรียกใช้ฟังก์ชันแปลภาษา
             const translatedThai = await translateToThai(enText);
-
-            renderUI(hadith, translatedThai);
+            renderUI(hadithData, translatedThai);
         } else {
             displayArea.innerHTML = '<div class="error">ขออภัย! ไม่พบข้อมูลหมายเลขนี้</div>';
         }
+
     } catch (err) {
+        console.error(err);
         displayArea.innerHTML = '<div class="error">เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err.message + '</div>';
     }
 });
@@ -170,7 +300,7 @@ function renderUI(hadith, thaiText) {
              </div>
 
               <center>
-                <p style="margin-top:15px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: HadithAPI.com <br> แปลไทย: Google Translate (via Apps Script)</p>
+                <p style="margin-top:15px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: ${document.getElementById('apiSource').value === 'fawazahmed' ? 'FawazAhmed (Github)' : (document.getElementById('apiSource').value === 'hadithapi-pages' ? 'HadithAPI.pages.dev' : 'HadithAPI.com')} <br> แปลไทย: Google Translate (via Apps Script)</p>
               </center>
         </div>
     `;
