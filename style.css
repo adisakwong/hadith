@@ -64,8 +64,8 @@ button {
 .arabic-box {
     font-family: 'Amiri', serif;
     direction: rtl;
-    font-size: 1.8rem;
-    line-height: 2.2;
+    font-size: 1.0rem;
+    line-height: 1.8;
     color: #222;
     padding-bottom: 20px;
     border-bottom: 1px solid #eee;

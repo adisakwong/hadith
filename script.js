@@ -1,5 +1,6 @@
 // เปลี่ยน API_KEY เป็นคีย์ที่คุณได้จาก hadithapi.com
 const HADITH_API_KEY = '$2y$10$Ig3V5LgHATTXyMo2s50kEg2lHABR3VGi6k0PT8DbWEoSYbAvL6';
+const hadithCache = {};
 
 document.getElementById('searchBtn').addEventListener('click', async () => {
     const source = document.getElementById('apiSource').value;
@@ -85,6 +86,56 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
                     status: 'Sahih',
                     hadithEnglish: data.hadith_english,
                     hadithArabic: data.hadith_arabic || data.hadith_english // Fallback to English
+                };
+            }
+
+        } else if (source === 'ahmedbaset') {
+            // 4. Logic for AhmedBaset (Github-JSON)
+            const mapping = {
+                'sahih-bukhari': 'the_9_books/bukhari',
+                'sahih-muslim': 'the_9_books/muslim',
+                'al-tirmidhi': 'the_9_books/tirmidhi',
+                'abu-dawood': 'the_9_books/abudawud',
+                'ibn-e-majah': 'the_9_books/ibnmajah',
+                'sunan-nasai': 'the_9_books/nasai',
+                'malik': 'the_9_books/malik',
+                'musnad-ahmad': 'the_9_books/ahmed',
+                'sunan-darimi': 'the_9_books/darimi',
+                'mishkat': 'other_books/mishkat_almasabih',
+                'al-adab-al-mufrad': 'other_books/aladab_almufrad',
+                'bulugh-al-maram': 'other_books/bulugh_almaram',
+                'riyad-as-salihin': 'other_books/riyad_assalihin',
+                'shamail-muhammadiyah': 'other_books/shamail_muhammadiyah',
+                'nawawi-40': 'forties/nawawi40',
+                'qudsi-40': 'forties/qudsi40',
+                'shahwaliullah-40': 'forties/shahwaliullah40'
+            };
+
+            const path = mapping[book];
+            if (!path) {
+                displayArea.innerHTML = '<div class="error">ขออภัย! แหล่งข้อมูล AhmedBaset ไม่รองรับตำราชุดนี้</div>';
+                return;
+            }
+
+            const url = `https://raw.githubusercontent.com/AhmedBaset/hadith-json/main/db/by_book/${path}.json`;
+            
+            let bookData = hadithCache[path];
+            if (!bookData) {
+                displayArea.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div>กำลังโหลดฐานข้อมูลตำรา (ครั้งแรกอาจใช้เวลานาน)...</div>';
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("ไม่สามารถโหลดไฟล์ฐานข้อมูลได้");
+                bookData = await res.json();
+                hadithCache[path] = bookData;
+            }
+
+            const hadith = bookData.hadiths.find(h => h.idInBook == number || h.id == number);
+            if (hadith) {
+                hadithData = {
+                    book: { bookName: bookData.metadata.english.title },
+                    hadithNumber: hadith.idInBook || hadith.id,
+                    status: 'Sahih', 
+                    hadithEnglish: (hadith.english && hadith.english.text) ? hadith.english.text : (typeof hadith.english === 'string' ? hadith.english : "(ไม่พบคำแปลภาษาอังกฤษ)"),
+                    hadithArabic: hadith.arabic || "ไม่พบข้อมูลภาษาอาหรับ"
                 };
             }
 
@@ -242,28 +293,43 @@ function openGoogleTranslate(text) {
 // ฟังก์ชันดึงข้อมูลและจัดการ UI (แก้ไขการส่งตัวแปร)
 function renderUI(hadith, thaiText) {
     const displayArea = document.getElementById('displayArea');
-
-    // ล้างข้อความพิเศษเพื่อไม่ให้ JavaScript Error
-    const cleanEn = hadith.hadithEnglish.replace(/'/g, "\\'").replace(/"/g, '\\"');
-    const cleanAr = hadith.hadithArabic.replace(/'/g, "\\'").replace(/"/g, '\\"');
-    const cleanTh = thaiText.replace(/'/g, "\\'").replace(/"/g, '\\"');
-
-    const googleTranslateUrl = `https://translate.google.com/?sl=en&tl=th&text=${encodeURIComponent(hadith.hadithEnglish)}&op=translate`;
-
-    // สร้างเนื้อหาที่จะแชร์
-    //const fullContent = `[Hadith] ${hadith.book.bookName} No. ${hadith.hadithNumber}\n\nArabic: ${hadith.hadithArabic}\n\nEnglish: ${hadith.hadithEnglish}\n\nแปลไทย: ${thaiText}`;
-
     const apiSource = document.getElementById('apiSource').value;
-    const sourceName = apiSource === 'fawazahmed' ? 'FawazAhmed (Github)' : (apiSource === 'hadithapi-pages' ? 'HadithAPI.pages.dev' : 'HadithAPI.com');
+    const isHadithPages = apiSource === 'hadithapi-pages';
 
-    const fullContent = `[Hadith] ${hadith.book.bookName}\nNo. ${hadith.hadithNumber} ● ${hadith.status}\n\nArabic: ${hadith.hadithArabic}\n\nแปลไทย: ${thaiText}\n\nแหล่งข้อมูล: ${sourceName}`;
+    // 1. จัดการภาษาอังกฤษ (ปรับปรุงตามคำขอ: LTR และไม่มีเว้นบรรทัด)
+    const cleanEnglishText = hadith.hadithEnglish.replace(/\s+/g, ' ').trim();
 
+    // 2. จัดการภาษาอาหรับ (แสดงเฉพาะเมื่อไม่ใช่ค่าเดียวกับอังกฤษ หรือไม่ใช่ HadithAPI.pages)
+    const showArabic = hadith.hadithArabic && hadith.hadithArabic !== hadith.hadithEnglish && !isHadithPages;
+    const arabicHtml = showArabic ? `<div class="arabic-box" style="margin-bottom:15px;">${hadith.hadithArabic}</div>` : '';
 
-    // ส่วนาแสดงผลภาษาอาหรับ และอังกฤษ 
-    // <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
-    // <div class="english-box" style="background:#f9f9f9; padding:15px; border-radius:8px; margin-top:15px;">
-    //             <p>${hadith.hadithEnglish}</p>
-    // </div>
+    // 3. จัดการภาษาอังกฤษ HTML
+    const englishHtml = `
+        <div class="english-box" style="direction:ltr; text-align:left; font-style:normal; margin-top:10px; color:#444; line-height:1.5;">
+            <span style="font-size:0.7rem; color:#999; display:block; margin-bottom:3px;">English</span>
+            <p style="margin:0; padding:0;">${cleanEnglishText}</p>
+        </div>
+    `;
+
+    // 4. ข้อมูลแหล่งข้อมูล
+    const sourceNameMap = {
+        'fawazahmed': 'FawazAhmed (Github)',
+        'hadithapi-pages': 'HadithAPI.pages.dev',
+        'hadithapi-com': 'HadithAPI.com',
+        'ahmedbaset': 'AhmedBaset (Github-JSON)'
+    };
+    const sourceName = sourceNameMap[apiSource] || 'Unknown Source';
+
+    // 5. สร้างเนื้อหาสำหรับแชร์
+    const arabicPart = showArabic ? `Arabic: ${hadith.hadithArabic}\n\n` : '';
+    const fullContent = `[Hadith] ${hadith.book.bookName}
+No. ${hadith.hadithNumber} ● ${hadith.status}
+
+${arabicPart}English: ${cleanEnglishText}
+
+แปลไทย: ${thaiText}
+
+แหล่งข้อมูล: ${sourceName}`;
 
     displayArea.innerHTML = `
         <div class="hadith-card">
@@ -282,8 +348,8 @@ function renderUI(hadith, thaiText) {
                 </span>
             </div>
             
-            
-            <div class="arabic-box" style="font-size:1.0rem;">${hadith.hadithArabic}</div>
+            ${arabicHtml}
+            ${englishHtml}
 
             
 
@@ -305,7 +371,7 @@ function renderUI(hadith, thaiText) {
              </div>
 
               <center>
-                <p style="margin-top:15px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: ${document.getElementById('apiSource').value === 'fawazahmed' ? 'FawazAhmed (Github)' : (document.getElementById('apiSource').value === 'hadithapi-pages' ? 'HadithAPI.pages.dev' : 'HadithAPI.com')} <br> แปลไทย: Google Translate (via Apps Script)</p>
+                <p style="margin-top:15px; color:#666; font-size:0.7rem; text-align:center">ข้อมูลฮาดีส: ${sourceName} <br> แปลไทย: Google Translate (via Apps Script)</p>
               </center>
         </div>
     `;
